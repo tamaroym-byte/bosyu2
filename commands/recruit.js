@@ -24,19 +24,13 @@ module.exports = {
 
     const start = new TextInputBuilder()
       .setCustomId('start')
-      .setLabel('開始時間 2026-05-20 21:00')
+      .setLabel('開始時間 (YYYY-MM-DD HH:mm)')
       .setStyle(TextInputStyle.Short)
       .setRequired(true);
 
     const max = new TextInputBuilder()
       .setCustomId('max')
       .setLabel('募集人数')
-      .setStyle(TextInputStyle.Short)
-      .setRequired(true);
-
-    const expire = new TextInputBuilder()
-      .setCustomId('expire')
-      .setLabel('有効期限')
       .setStyle(TextInputStyle.Short)
       .setRequired(true);
 
@@ -50,7 +44,6 @@ module.exports = {
       new ActionRowBuilder().addComponents(game),
       new ActionRowBuilder().addComponents(start),
       new ActionRowBuilder().addComponents(max),
-      new ActionRowBuilder().addComponents(expire),
       new ActionRowBuilder().addComponents(note)
     );
 
