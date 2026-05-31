@@ -13,28 +13,60 @@ const commandFiles = fs
   .readdirSync('./commands')
   .filter(file => file.endsWith('.js'));
 
+console.log('========================');
+console.log('COMMAND DEBUG START');
+console.log('========================');
+
 for (const file of commandFiles) {
 
   const command =
     require(`./commands/${file}`);
 
-  console.log(
-  'LOAD COMMAND:',
-  command.data.name
-  );
+  const json =
+    command.data.toJSON();
+
+  console.log('\n');
+  console.log('FILE:', file);
+  console.log('COMMAND NAME:', json.name);
+
+  if (json.options) {
+
+    console.log('OPTIONS:');
+
+    json.options.forEach((option, index) => {
+
+      console.log(
+        `[${index}]`,
+        option.name,
+        'required =',
+        option.required === true
+      );
+    });
+  }
 
   console.log(
     JSON.stringify(
-      command.data.toJSON(),
+      json,
       null,
       2
     )
   );
 
-  commands.push(
-    command.data.toJSON()
-  );
+  commands.push(json);
 }
+
+console.log('\n');
+console.log('========================');
+console.log('FINAL COMMAND ORDER');
+console.log('========================');
+
+commands.forEach((cmd, index) => {
+
+  console.log(
+    `[${index}]`,
+    cmd.name
+  );
+});
 
 const rest = new REST({
   version: '10'
@@ -45,6 +77,9 @@ const rest = new REST({
 (async () => {
 
   try {
+
+    console.log('\n');
+    console.log('DEPLOY START');
 
     await rest.put(
       Routes.applicationGuildCommands(
@@ -62,6 +97,20 @@ const rest = new REST({
 
   } catch (err) {
 
+    console.error('\n');
+    console.error('DEPLOY ERROR');
     console.error(err);
+
+    if (err.rawError) {
+
+      console.error('\n');
+      console.error(
+        JSON.stringify(
+          err.rawError,
+          null,
+          2
+        )
+      );
+    }
   }
 })();
