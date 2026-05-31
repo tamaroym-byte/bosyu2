@@ -31,143 +31,110 @@ module.exports = {
       interaction.isChatInputCommand()
     ) {
 
-      const command =
-        client.commands.get(
-          interaction.commandName
-        );
-
-      if (!command) return;
-
-      await command.execute(
-        interaction
-      );
-    }
-
-    // Modal Submit
-    if (
-      interaction.isModalSubmit()
-    ) {
-
+      // /rec
       if (
-        interaction.customId !==
-        'recruit-modal'
-      ) return;
-
-      const game =
-        interaction.fields
-          .getTextInputValue('game');
-
-      const startInput =
-        interaction.fields
-          .getTextInputValue('start');
-
-      const max = Number(
-        interaction.fields
-          .getTextInputValue('max')
-      );
-
-      const note =
-        interaction.fields
-          .getTextInputValue('note');
-
-      const startTime =
-        parseJST(startInput);
-
-      if (!startTime.isValid()) {
-
-        return interaction.reply({
-          content:
-            '日時形式が不正です',
-          ephemeral: true
-        });
-      }
-
-      const now = nowJST();
-
-      if (
-        startTime.isBefore(now)
+        interaction.commandName ===
+        'rec'
       ) {
 
-        return interaction.reply({
-          content:
-            '過去の時間では募集できません',
-          ephemeral: true
-        });
-      }
+        const game =
+          interaction.options.getString(
+            'game'
+          );
 
-      const expiresAt =
-        startTime.add(
-          24,
-          'hour'
-        );
+        const day =
+          interaction.options.getInteger(
+            'day'
+          );
 
-      const setting =
-        db.prepare(`
-          SELECT *
-          FROM guild_settings
-          WHERE guild_id = ?
-        `).get(
-          interaction.guild.id
-        );
+        const time =
+          interaction.options.getString(
+            'time'
+          );
 
-      if (
-        !setting?.recruit_channel_id
-      ) {
+        const max =
+          interaction.options.getInteger(
+            'max'
+          );
 
-        return interaction.reply({
-          content:
-            '募集チャンネル未設定',
-          ephemeral: true
-        });
-      }
+        const note =
+          interaction.options.getString(
+            'note'
+          ) || '';
 
-      const channel =
-        interaction.guild.channels.cache.get(
-          setting.recruit_channel_id
-        );
+        const isNow =
+          !day || !time;
 
-      const tempRecruit = {
-        game_name: game,
-        start_time:
-          startTime.toISOString(),
-        expires_at:
-          expiresAt.toISOString(),
-        max_players: max,
-        host_id:
-          interaction.user.id,
-        status: 'OPEN',
-        note,
-        id: 'TEMP'
-      };
+        let startTime;
 
-      const embed =
-        buildEmbed(
-          tempRecruit,
-          []
-        );
+        if (isNow) {
 
-      const buttons =
-        buildButtons('OPEN');
+          startTime =
+            nowJST();
 
-      const message =
-        await channel.send({
-          embeds: [embed],
-          components: [buttons]
-        });
+        } else {
 
-      const recruitId =
-        recruitService.createRecruit({
+          const now =
+            nowJST();
+
+          const year =
+            now.year();
+
+          const month =
+            String(
+              now.month() + 1
+            ).padStart(2, '0');
+
+          const dayText =
+            String(day)
+              .padStart(2, '0');
+
+          startTime =
+            parseJST(
+              `${year}-${month}-${dayText} ${time}`
+            );
+        }
+
+        const expiresAt =
+          startTime.add(
+            24,
+            'hour'
+          );
+
+        const setting =
+          db.prepare(`
+            SELECT *
+            FROM guild_settings
+            WHERE guild_id = ?
+          `).get(
+            interaction.guild.id
+          );
+
+        if (
+          !setting?.recruit_channel_id
+        ) {
+
+          return interaction.reply({
+            content:
+              '募集チャンネル未設定',
+            flags: 64
+          });
+        }
+
+        const channel =
+          interaction.guild.channels.cache.get(
+            setting.recruit_channel_id
+          );
+
+        const tempRecruit = {
+
+          id: 'TEMP',
+
           guild_id:
             interaction.guild.id,
 
           host_id:
             interaction.user.id,
-
-          message_id:
-            message.id,
-
-          channel_id:
-            channel.id,
 
           game_name: game,
 
@@ -181,18 +148,87 @@ module.exports = {
 
           note,
 
-          status: 'OPEN'
-        });
+          status: 'OPEN',
 
-      await interaction.reply({
-        content:
-          `募集作成完了 ID:${recruitId}`,
-        ephemeral: true
-      });
+          is_now:
+            isNow ? 1 : 0
+        };
+
+        const embed =
+          buildEmbed(
+            tempRecruit,
+            []
+          );
+
+        const buttons =
+          buildButtons(
+            'OPEN'
+          );
+
+        const message =
+          await channel.send({
+            embeds: [embed],
+            components: [buttons]
+          });
+
+        const recruitId =
+          recruitService.createRecruit({
+
+            guild_id:
+              interaction.guild.id,
+
+            host_id:
+              interaction.user.id,
+
+            message_id:
+              message.id,
+
+            channel_id:
+              channel.id,
+
+            game_name: game,
+
+            start_time:
+              startTime.toISOString(),
+
+            expires_at:
+              expiresAt.toISOString(),
+
+            max_players: max,
+
+            note,
+
+            status: 'OPEN',
+
+            is_now:
+              isNow ? 1 : 0
+          });
+
+        return interaction.reply({
+          content:
+            `募集作成完了 ID:${recruitId}`,
+          flags: 64
+        });
+      }
+
+      // 他コマンド
+      const command =
+        client.commands.get(
+          interaction.commandName
+        );
+
+      if (!command)
+        return;
+
+      await command.execute(
+        interaction
+      );
     }
 
     // Button
-    if (interaction.isButton()) {
+    if (
+      interaction.isButton()
+    ) {
 
       const messageId =
         interaction.message.id;
@@ -204,7 +240,38 @@ module.exports = {
           WHERE message_id = ?
         `).get(messageId);
 
-      if (!recruit) return;
+      if (!recruit)
+        return;
+
+      // 募集主のみ停止/終了
+      if (
+        (
+          interaction.customId ===
+          'pause'
+
+          ||
+
+          interaction.customId ===
+          'resume'
+
+          ||
+
+          interaction.customId ===
+          'close'
+        )
+
+        &&
+
+        interaction.user.id !==
+        recruit.host_id
+      ) {
+
+        return interaction.reply({
+          content:
+            '募集主のみ操作できます',
+          flags: 64
+        });
+      }
 
       let participants =
         recruitService.getParticipants(
@@ -215,7 +282,6 @@ module.exports = {
         interaction.customId
       ) {
 
-        // 参加
         case 'join': {
 
           const exists =
@@ -230,7 +296,7 @@ module.exports = {
             return interaction.reply({
               content:
                 '既に参加済みです',
-              ephemeral: true
+              flags: 64
             });
           }
 
@@ -241,8 +307,8 @@ module.exports = {
 
             return interaction.reply({
               content:
-                '募集は終了しています',
-              ephemeral: true
+                '募集終了済みです',
+              flags: 64
             });
           }
 
@@ -280,7 +346,6 @@ module.exports = {
           break;
         }
 
-        // 退出
         case 'leave': {
 
           recruitService.removeParticipant(
@@ -311,7 +376,6 @@ module.exports = {
           break;
         }
 
-        // 停止
         case 'pause': {
 
           recruit.status =
@@ -326,7 +390,6 @@ module.exports = {
           break;
         }
 
-        // 再開
         case 'resume': {
 
           recruit.status =
@@ -341,7 +404,6 @@ module.exports = {
           break;
         }
 
-        // 終了
         case 'close': {
 
           recruit.status =
