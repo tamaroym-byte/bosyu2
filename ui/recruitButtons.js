@@ -32,7 +32,7 @@ function buildButtons(status) {
       new ButtonBuilder()
         .setCustomId(pauseId)
         .setLabel(pauseLabel)
-        .setStyle(ButtonStyle.Warning),
+        .setStyle(ButtonStyle.Success),
 
       new ButtonBuilder()
         .setCustomId('close')
