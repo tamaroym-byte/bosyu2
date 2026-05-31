@@ -5,35 +5,40 @@ const {
 } = require('discord.js');
 
 function buildButtons(status) {
-  const pauseLabel = status === 'PAUSED'
-    ? '募集再開'
-    : '募集中止';
 
-  const pauseId = status === 'PAUSED'
-    ? 'resume'
-    : 'pause';
+  const pauseLabel =
+    status === 'PAUSED'
+      ? '募集再開'
+      : '募集中止';
 
-  return new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId('join')
-      .setLabel('参加')
-      .setStyle(ButtonStyle.Primary),
+  const pauseId =
+    status === 'PAUSED'
+      ? 'resume'
+      : 'pause';
 
-    new ButtonBuilder()
-      .setCustomId('leave')
-      .setLabel('退出')
-      .setStyle(ButtonStyle.Secondary),
+  return new ActionRowBuilder()
+    .addComponents(
 
-    new ButtonBuilder()
-      .setCustomId(pauseId)
-      .setLabel(pauseLabel)
-      .setStyle(ButtonStyle.Warning),
+      new ButtonBuilder()
+        .setCustomId('join')
+        .setLabel('参加')
+        .setStyle(ButtonStyle.Primary),
 
-    new ButtonBuilder()
-      .setCustomId('close')
-      .setLabel('募集終了')
-      .setStyle(ButtonStyle.Danger)
-  );
+      new ButtonBuilder()
+        .setCustomId('leave')
+        .setLabel('退出')
+        .setStyle(ButtonStyle.Secondary),
+
+      new ButtonBuilder()
+        .setCustomId(pauseId)
+        .setLabel(pauseLabel)
+        .setStyle(ButtonStyle.Warning),
+
+      new ButtonBuilder()
+        .setCustomId('close')
+        .setLabel('募集終了')
+        .setStyle(ButtonStyle.Danger)
+    );
 }
 
 module.exports = buildButtons;
