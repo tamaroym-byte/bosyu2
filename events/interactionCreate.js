@@ -95,7 +95,7 @@ module.exports = {
             ).padStart(2, '0');
 
           const dayText =
-            String(day)
+            String(autoDay)
               .padStart(2, '0');
 
           startTime =
