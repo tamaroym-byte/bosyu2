@@ -8,7 +8,7 @@ const {
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('recruit')
+    .setName('rec')
     .setDescription('募集を作成'),
 
   async execute(interaction) {
