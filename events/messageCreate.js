@@ -1,33 +1,49 @@
-const db = require('../db/database');
+const db =
+  require('../db/database');
 
 module.exports = {
   name: 'messageCreate',
 
   async execute(message) {
-    if (message.author.bot) return;
 
-    if (!message.reference) return;
+    if (message.author.bot)
+      return;
 
-    const recruit = db.prepare(`
-      SELECT * FROM recruits
-      WHERE message_id = ?
-    `).get(message.reference.messageId);
+    if (!message.reference)
+      return;
 
-    if (!recruit) return;
+    const recruit =
+      db.prepare(`
+        SELECT *
+        FROM recruits
+        WHERE message_id = ?
+      `).get(
+        message.reference.messageId
+      );
 
-    const participants = db.prepare(`
-      SELECT * FROM recruit_participants
-      WHERE recruit_id=?
-    `).all(recruit.id);
+    if (!recruit)
+      return;
 
-    const mentions = participants
-      .map(p => `<@${p.user_id}>`)
-      .join(' ');
+    const participants =
+      db.prepare(`
+        SELECT *
+        FROM recruit_participants
+        WHERE recruit_id = ?
+      `).all(recruit.id);
 
-    if (!mentions) return;
+    if (!participants.length)
+      return;
+
+    const mentions =
+      participants
+        .map(
+          p => `<@${p.user_id}>`
+        )
+        .join(' ');
 
     await message.reply({
-      content: `募集に返信があります ${mentions}`
+      content:
+        `募集に返信があります\n${mentions}`
     });
   }
 };
