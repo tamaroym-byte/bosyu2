@@ -13,6 +13,7 @@ module.exports = {
         '募集を作成'
       )
 
+      // 必須
       .addStringOption(option =>
         option
           .setName('game')
@@ -24,11 +25,23 @@ module.exports = {
 
       .addIntegerOption(option =>
         option
+          .setName('max')
+          .setDescription(
+            '募集人数'
+          )
+          .setRequired(true)
+          .setMinValue(2)
+          .setMaxValue(20)
+      )
+
+      // 任意
+      .addIntegerOption(option =>
+        option
           .setName('day')
           .setDescription(
             '日'
           )
-          .setRequired(true)
+          .setRequired(false)
           .setMinValue(1)
           .setMaxValue(31)
       )
@@ -69,17 +82,6 @@ module.exports = {
           )
       )
 
-      .addIntegerOption(option =>
-        option
-          .setName('max')
-          .setDescription(
-            '募集人数'
-          )
-          .setRequired(true)
-          .setMinValue(2)
-          .setMaxValue(20)
-      )
-
       .addStringOption(option =>
         option
           .setName('note')
@@ -94,7 +96,7 @@ module.exports = {
     await interaction.reply({
       content:
         '募集作成中...',
-      ephemeral: true
+      flags: 64
     });
   }
 };
