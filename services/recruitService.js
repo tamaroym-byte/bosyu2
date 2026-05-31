@@ -1,6 +1,8 @@
-const db = require('../db/database');
+const db =
+  require('../db/database');
 
 function createRecruit(data) {
+
   const stmt = db.prepare(`
     INSERT INTO recruits (
       guild_id,
@@ -35,28 +37,53 @@ function createRecruit(data) {
 }
 
 function getRecruit(id) {
+
   return db.prepare(`
-    SELECT * FROM recruits WHERE id = ?
+    SELECT *
+    FROM recruits
+    WHERE id = ?
   `).get(id);
 }
 
-function addParticipant(recruitId, userId) {
+function addParticipant(
+  recruitId,
+  userId
+) {
+
   db.prepare(`
-    INSERT INTO recruit_participants (recruit_id, user_id)
+    INSERT INTO recruit_participants (
+      recruit_id,
+      user_id
+    )
     VALUES (?, ?)
-  `).run(recruitId, userId);
+  `).run(
+    recruitId,
+    userId
+  );
 }
 
-function removeParticipant(recruitId, userId) {
+function removeParticipant(
+  recruitId,
+  userId
+) {
+
   db.prepare(`
     DELETE FROM recruit_participants
-    WHERE recruit_id = ? AND user_id = ?
-  `).run(recruitId, userId);
+    WHERE recruit_id = ?
+    AND user_id = ?
+  `).run(
+    recruitId,
+    userId
+  );
 }
 
-function getParticipants(recruitId) {
+function getParticipants(
+  recruitId
+) {
+
   return db.prepare(`
-    SELECT * FROM recruit_participants
+    SELECT *
+    FROM recruit_participants
     WHERE recruit_id = ?
   `).all(recruitId);
 }
