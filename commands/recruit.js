@@ -12,6 +12,7 @@ module.exports = {
     .setDescription('募集を作成'),
 
   async execute(interaction) {
+
     const modal = new ModalBuilder()
       .setCustomId('recruit-modal')
       .setTitle('ゲーム募集作成');
