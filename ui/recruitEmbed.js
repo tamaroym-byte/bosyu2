@@ -64,9 +64,11 @@ function buildEmbed(
   }
 
   const startText =
-    dayjs(recruit.start_time)
-      .tz('Asia/Tokyo')
-      .format('MM/DD HH:mm');
+    recruit.is_now
+      ? 'いまから'
+      : dayjs(recruit.start_time)
+          .tz('Asia/Tokyo')
+          .format('MM/DD HH:mm');
 
   const expireText =
     dayjs(recruit.expires_at)
