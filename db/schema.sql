@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS recruits (
     expires_at TEXT,
     note TEXT,
     status TEXT,
+    is_now INTEGER DEFAULT 0,
     created_at TEXT
 );
 
