@@ -62,8 +62,17 @@ module.exports = {
             'note'
           ) || '';
 
+        if (day && !time) {
+
+          return interaction.reply({
+            content:
+              '時間も入力してください',
+            flags: 64
+          });
+        }
+
         const isNow =
-          !day || !time;
+          !day && !time;
 
         let startTime;
 
