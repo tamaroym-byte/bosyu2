@@ -39,7 +39,7 @@ module.exports = {
           .setDescription(
             '開始時間'
           )
-          .setRequired(true)
+          .setRequired(false)
 
           .addChoices(
             { name: '00:00', value: '00:00' },
