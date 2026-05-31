@@ -18,6 +18,19 @@ for (const file of commandFiles) {
   const command =
     require(`./commands/${file}`);
 
+  console.log(
+  'LOAD COMMAND:',
+  command.data.name
+  );
+
+  console.log(
+    JSON.stringify(
+      command.data.toJSON(),
+      null,
+      2
+    )
+  );
+
   commands.push(
     command.data.toJSON()
   );
