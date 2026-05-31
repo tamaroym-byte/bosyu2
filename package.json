@@ -2,10 +2,15 @@
   "name": "discord-recruit-bot",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "deploy": "node deploy-commands.js"
+
+  "engines": {
+    "node": "20.x"
   },
+
+  "scripts": {
+    "start": "node deploy-commands.js && node index.js"
+  },
+
   "dependencies": {
     "better-sqlite3": "^9.4.0",
     "dayjs": "^1.11.13",
