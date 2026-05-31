@@ -1,6 +1,7 @@
 const {
   SlashCommandBuilder,
-  PermissionFlagsBits
+  PermissionFlagsBits,
+  ChannelType
 } = require('discord.js');
 
 const db =
@@ -19,14 +20,16 @@ module.exports = {
         '募集チャンネル設定'
       )
 
-      .addChannelOption(
-        option =>
-          option
-            .setName('channel')
-            .setDescription(
-              '募集投稿チャンネル'
-            )
-            .setRequired(true)
+      .addChannelOption(option =>
+        option
+          .setName('channel')
+          .setDescription(
+            '募集チャンネル'
+          )
+          .setRequired(true)
+          .addChannelTypes(
+            ChannelType.GuildText
+          )
       )
 
       .setDefaultMemberPermissions(
@@ -40,44 +43,22 @@ module.exports = {
         'channel'
       );
 
-    const exists =
-      db.prepare(`
-        SELECT *
-        FROM guild_settings
-        WHERE guild_id=?
-      `).get(
-        interaction.guild.id
-      );
-
-    if (exists) {
-
-      db.prepare(`
-        UPDATE guild_settings
-        SET recruit_channel_id=?
-        WHERE guild_id=?
-      `).run(
-        channel.id,
-        interaction.guild.id
-      );
-
-    } else {
-
-      db.prepare(`
-        INSERT INTO guild_settings (
-          guild_id,
-          recruit_channel_id
-        )
-        VALUES (?, ?)
-      `).run(
-        interaction.guild.id,
-        channel.id
-      );
-    }
+    db.prepare(`
+      INSERT OR REPLACE
+      INTO guild_settings (
+        guild_id,
+        recruit_channel_id
+      )
+      VALUES (?, ?)
+    `).run(
+      interaction.guild.id,
+      channel.id
+    );
 
     await interaction.reply({
       content:
-        '募集チャンネル設定完了',
-      ephemeral: true
+        `募集チャンネルを ${channel} に設定しました`,
+      flags: 64
     });
   }
 };
