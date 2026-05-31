@@ -1,73 +1,100 @@
 const {
-  SlashCommandBuilder,
-  EmbedBuilder
+  SlashCommandBuilder
 } = require('discord.js');
-
-const db =
-  require('../db/database');
 
 module.exports = {
 
   data:
     new SlashCommandBuilder()
 
-      .setName(
-        'recruit-list'
-      )
+      .setName('rec')
 
       .setDescription(
-        '現在の募集一覧'
+        '募集を作成'
+      )
+
+      .addStringOption(option =>
+        option
+          .setName('game')
+          .setDescription(
+            'ゲーム名'
+          )
+          .setRequired(true)
+      )
+
+      .addIntegerOption(option =>
+        option
+          .setName('day')
+          .setDescription(
+            '日'
+          )
+          .setRequired(false)
+          .setMinValue(1)
+          .setMaxValue(31)
+      )
+
+      .addStringOption(option =>
+        option
+          .setName('time')
+          .setDescription(
+            '開始時間'
+          )
+          .setRequired(false)
+
+          .addChoices(
+            { name: '00:00', value: '00:00' },
+            { name: '01:00', value: '01:00' },
+            { name: '02:00', value: '02:00' },
+            { name: '03:00', value: '03:00' },
+            { name: '04:00', value: '04:00' },
+            { name: '05:00', value: '05:00' },
+            { name: '06:00', value: '06:00' },
+            { name: '07:00', value: '07:00' },
+            { name: '08:00', value: '08:00' },
+            { name: '09:00', value: '09:00' },
+            { name: '10:00', value: '10:00' },
+            { name: '11:00', value: '11:00' },
+            { name: '12:00', value: '12:00' },
+            { name: '13:00', value: '13:00' },
+            { name: '14:00', value: '14:00' },
+            { name: '15:00', value: '15:00' },
+            { name: '16:00', value: '16:00' },
+            { name: '17:00', value: '17:00' },
+            { name: '18:00', value: '18:00' },
+            { name: '19:00', value: '19:00' },
+            { name: '20:00', value: '20:00' },
+            { name: '21:00', value: '21:00' },
+            { name: '22:00', value: '22:00' },
+            { name: '23:00', value: '23:00' }
+          )
+      )
+
+      .addIntegerOption(option =>
+        option
+          .setName('max')
+          .setDescription(
+            '募集人数'
+          )
+          .setRequired(true)
+          .setMinValue(2)
+          .setMaxValue(20)
+      )
+
+      .addStringOption(option =>
+        option
+          .setName('note')
+          .setDescription(
+            '備考'
+          )
+          .setRequired(false)
       ),
 
   async execute(interaction) {
 
-    const recruits =
-      db.prepare(`
-        SELECT *
-        FROM recruits
-        WHERE status IN (
-          'OPEN',
-          'FULL',
-          'PAUSED'
-        )
-        ORDER BY start_time ASC
-      `).all();
-
-    if (!recruits.length) {
-
-      return interaction.reply({
-        content:
-          '現在募集中の募集はありません',
-        ephemeral: true
-      });
-    }
-
-    const description =
-      recruits
-        .map(r => {
-
-          return (
-            `ID:${r.id}\n` +
-            `${r.game_name}\n` +
-            `状態:${r.status}\n`
-          );
-        })
-        .join('\n');
-
-    const embed =
-      new EmbedBuilder()
-
-        .setTitle(
-          '募集一覧'
-        )
-
-        .setDescription(
-          description
-        );
-
     await interaction.reply({
-      embeds: [embed],
-      ephemeral: true
+      content:
+        '募集作成中...',
+      flags: 64
     });
   }
 };
