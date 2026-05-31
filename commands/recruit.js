@@ -1,53 +1,100 @@
 const {
-  SlashCommandBuilder,
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
-  ActionRowBuilder
+  SlashCommandBuilder
 } = require('discord.js');
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName('rec')
-    .setDescription('募集を作成'),
+
+  data:
+    new SlashCommandBuilder()
+
+      .setName('rec')
+
+      .setDescription(
+        '募集を作成'
+      )
+
+      .addStringOption(option =>
+        option
+          .setName('game')
+          .setDescription(
+            'ゲーム名'
+          )
+          .setRequired(true)
+      )
+
+      .addIntegerOption(option =>
+        option
+          .setName('day')
+          .setDescription(
+            '日'
+          )
+          .setRequired(true)
+          .setMinValue(1)
+          .setMaxValue(31)
+      )
+
+      .addStringOption(option =>
+        option
+          .setName('time')
+          .setDescription(
+            '開始時間'
+          )
+          .setRequired(true)
+
+          .addChoices(
+            { name: '00:00', value: '00:00' },
+            { name: '01:00', value: '01:00' },
+            { name: '02:00', value: '02:00' },
+            { name: '03:00', value: '03:00' },
+            { name: '04:00', value: '04:00' },
+            { name: '05:00', value: '05:00' },
+            { name: '06:00', value: '06:00' },
+            { name: '07:00', value: '07:00' },
+            { name: '08:00', value: '08:00' },
+            { name: '09:00', value: '09:00' },
+            { name: '10:00', value: '10:00' },
+            { name: '11:00', value: '11:00' },
+            { name: '12:00', value: '12:00' },
+            { name: '13:00', value: '13:00' },
+            { name: '14:00', value: '14:00' },
+            { name: '15:00', value: '15:00' },
+            { name: '16:00', value: '16:00' },
+            { name: '17:00', value: '17:00' },
+            { name: '18:00', value: '18:00' },
+            { name: '19:00', value: '19:00' },
+            { name: '20:00', value: '20:00' },
+            { name: '21:00', value: '21:00' },
+            { name: '22:00', value: '22:00' },
+            { name: '23:00', value: '23:00' }
+          )
+      )
+
+      .addIntegerOption(option =>
+        option
+          .setName('max')
+          .setDescription(
+            '募集人数'
+          )
+          .setRequired(true)
+          .setMinValue(2)
+          .setMaxValue(20)
+      )
+
+      .addStringOption(option =>
+        option
+          .setName('note')
+          .setDescription(
+            '備考'
+          )
+          .setRequired(false)
+      ),
 
   async execute(interaction) {
 
-    const modal = new ModalBuilder()
-      .setCustomId('recruit-modal')
-      .setTitle('ゲーム募集作成');
-
-    const game = new TextInputBuilder()
-      .setCustomId('game')
-      .setLabel('ゲーム名')
-      .setStyle(TextInputStyle.Short)
-      .setRequired(true);
-
-    const start = new TextInputBuilder()
-      .setCustomId('start')
-      .setLabel('開始時間 (YYYY-MM-DD HH:mm)')
-      .setStyle(TextInputStyle.Short)
-      .setRequired(true);
-
-    const max = new TextInputBuilder()
-      .setCustomId('max')
-      .setLabel('募集人数')
-      .setStyle(TextInputStyle.Short)
-      .setRequired(true);
-
-    const note = new TextInputBuilder()
-      .setCustomId('note')
-      .setLabel('備考')
-      .setStyle(TextInputStyle.Paragraph)
-      .setRequired(false);
-
-    modal.addComponents(
-      new ActionRowBuilder().addComponents(game),
-      new ActionRowBuilder().addComponents(start),
-      new ActionRowBuilder().addComponents(max),
-      new ActionRowBuilder().addComponents(note)
-    );
-
-    await interaction.showModal(modal);
+    await interaction.reply({
+      content:
+        '募集作成中...',
+      ephemeral: true
+    });
   }
 };
