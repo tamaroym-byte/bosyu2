@@ -80,7 +80,7 @@ function buildEmbed(
     .setColor(color)
     .setDescription(
 
-      `予定開始時刻\n${startText}\n\n` +
+      `開始日時\n${startText}\n\n` +
 
       `募集状況\n` +
       `${participants.length}` +
