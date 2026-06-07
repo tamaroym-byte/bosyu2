@@ -36,3 +36,9 @@ CREATE TABLE IF NOT EXISTS guild_settings (
     recruit_channel_id TEXT,
     admin_channel_id TEXT
 );
+
+CREATE TABLE IF NOT EXISTS mention_roles (
+  guild_id TEXT NOT NULL,
+  role_id TEXT NOT NULL,
+  PRIMARY KEY(guild_id, role_id)
+);
