@@ -176,7 +176,7 @@ module.exports = {
 
         const message =
           await channel.send({
-            content: [mentionText],
+            content: '@everyone',
             embeds: [embed],
             components: [buttons],
           });
