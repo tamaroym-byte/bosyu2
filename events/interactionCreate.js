@@ -57,6 +57,11 @@ module.exports = {
             'max'
           );
 
+        const mention =
+          interaction.options.getString(
+          'mention'
+          );
+
         const note =
           interaction.options.getString(
             'note'
@@ -110,6 +115,32 @@ module.exports = {
             'hour'
           );
 
+        const mentionRoles =
+          db.prepare(`
+            SELECT role_id
+            FROM mention_roles
+            WHERE guild_id=?
+          `).all(
+            interaction.guild.id
+          );
+
+        let mentionText = '';
+
+        if (mention === 'everyone') {
+
+          mentionText =
+            '@everyone';
+
+        }else if (mention === 'here') {
+
+          mentionText =
+            '@here';
+        }else if (mention) {
+
+          mentionText =
+          `<@&${mention}>`;
+        }
+        
         const setting =
           db.prepare(`
             SELECT *
@@ -176,7 +207,7 @@ module.exports = {
 
         const message =
           await channel.send({
-            content: '@everyone',
+            content: [mentionText],
             embeds: [embed],
             components: [buttons]
           });
