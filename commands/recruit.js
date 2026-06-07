@@ -35,13 +35,6 @@ module.exports = {
       )
 
       // 任意
-
-      .addStringOption(option =>
-        option
-        .setName('mention')
-        .setDescription('通知先')
-        .setRequired(false)
-      )
     
       .addIntegerOption(option =>
         option
