@@ -95,7 +95,7 @@ module.exports = {
             ).padStart(2, '0');
 
           const dayText =
-            String(autoDay)
+            String(day)
               .padStart(2, '0');
 
           startTime =
@@ -176,6 +176,7 @@ module.exports = {
 
         const message =
           await channel.send({
+            content: '@everyone',
             embeds: [embed],
             components: [buttons]
           });
