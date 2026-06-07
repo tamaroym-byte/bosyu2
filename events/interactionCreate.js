@@ -209,7 +209,13 @@ module.exports = {
           await channel.send({
             content: [mentionText],
             embeds: [embed],
-            components: [buttons]
+            components: [buttons],
+            allowedMentions: {
+              parse: [
+                'everyone',
+                'roles'
+              ]
+            }
           });
 
         const recruitId =
